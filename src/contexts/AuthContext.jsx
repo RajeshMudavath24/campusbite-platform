@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { auth } from '../firebase';
+import { auth, db } from '../firebase';
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut, getIdTokenResult, setPersistence, browserLocalPersistence } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
 
 const AuthContext = createContext();
 
@@ -35,11 +36,26 @@ export const AuthProvider = ({ children }) => {
         if (fbUser) {
           const tokenResult = await getIdTokenResult(fbUser, true);
           const role = tokenResult?.claims?.role || 'student';
+          
+          // Fetch user data from Firestore to get the name
+          let userName = fbUser.displayName || fbUser.email?.split('@')[0] || 'Student';
+          try {
+            const userDoc = await getDoc(doc(db, 'users', fbUser.uid));
+            if (userDoc.exists()) {
+              const userData = userDoc.data();
+              userName = userData.name || userName;
+            }
+          } catch (firestoreError) {
+            console.warn('[Auth] Could not fetch user data from Firestore:', firestoreError);
+            // Continue with default name
+          }
+          
           setUser({
             id: fbUser.uid,
             uid: fbUser.uid,
             email: fbUser.email,
             role,
+            name: userName,
             displayName: fbUser.displayName || null,
           });
         } else {
@@ -68,14 +84,39 @@ export const AuthProvider = ({ children }) => {
       await setPersistence(auth, browserLocalPersistence);
       const cred = await signInWithEmailAndPassword(auth, email, password);
       
-      // For demo purposes, we'll use the role from the form
-      // In production, you'd set custom claims on the server side
+      // Get role from token claims (server-side role assignment)
+      let userRole = role;
+      try {
+        const tokenResult = await getIdTokenResult(cred.user, true);
+        userRole = tokenResult?.claims?.role || role;
+      } catch (tokenError) {
+        console.warn('[Auth] Could not get token claims, using form role:', tokenError);
+      }
+      
+      // Fetch user data from Firestore to get the name
+      let userName = cred.user.displayName || email.split('@')[0] || 'Student';
+      try {
+        const userDoc = await getDoc(doc(db, 'users', cred.user.uid));
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          userName = userData.name || userName;
+          // Use role from Firestore if available and different from token
+          if (userData.role && userData.role !== userRole) {
+            userRole = userData.role;
+          }
+        }
+      } catch (firestoreError) {
+        console.warn('[Auth] Could not fetch user data from Firestore:', firestoreError);
+        // Continue with default name
+      }
+      
       const userData = { 
         id: cred.user.uid, 
         uid: cred.user.uid, 
         email: cred.user.email, 
-        role: role,
-        name: cred.user.displayName || email.split('@')[0]
+        role: userRole,
+        name: userName,
+        displayName: cred.user.displayName || null
       };
       setUser(userData);
       return { success: true, user: userData };

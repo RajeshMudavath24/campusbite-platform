@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BarChart3, TrendingUp, Clock, DollarSign, Download } from 'lucide-react';
+import { BarChart3, TrendingUp, Clock, CircleDollarSign, Download } from 'lucide-react';
 import { formatCurrency } from '../utils/helpers';
 import Button from '../components/Button';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -207,7 +207,7 @@ const AnalyticsPage = () => {
         <div className="card">
           <div className="flex items-center">
             <div className="p-2 bg-purple-100 rounded-lg">
-              <DollarSign className="w-6 h-6 text-purple-600" />
+              <CircleDollarSign className="w-6 h-6 text-purple-600" />
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Weekly Revenue</p>

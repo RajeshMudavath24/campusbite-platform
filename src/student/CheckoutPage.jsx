@@ -6,7 +6,7 @@ import { httpsCallable } from 'firebase/functions';
 import { functions } from '../firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
-import { ShoppingCart, DollarSign, CheckCircle, AlertCircle } from 'lucide-react';
+import { ShoppingCart, CircleDollarSign, CheckCircle, AlertCircle } from 'lucide-react';
 import PaymentGateway from '../components/PaymentGateway';
 import { formatCurrency } from '../utils/helpers';
 
@@ -75,14 +75,14 @@ const CashOnDeliveryForm = ({ orderTotal, onOrderSuccess, onOrderError }) => {
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="bg-white p-6 rounded-lg border border-gray-200">
         <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-          <DollarSign className="w-5 h-5 mr-2" />
+          <CircleDollarSign className="w-5 h-5 mr-2" />
           Payment
         </h3>
         
         <div className="mb-6">
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
             <div className="flex items-center">
-              <DollarSign className="w-5 h-5 text-blue-600 mr-2" />
+              <CircleDollarSign className="w-5 h-5 text-blue-600 mr-2" />
               <div>
                 <h4 className="font-medium text-blue-900">Cash on Pickup</h4>
                 <p className="text-sm text-blue-700">
@@ -130,8 +130,8 @@ const CashOnDeliveryForm = ({ orderTotal, onOrderSuccess, onOrderError }) => {
             </>
           ) : (
             <>
-              <DollarSign className="w-4 h-4 mr-2" />
-              Place Order - Pay ${orderTotal.toFixed(2)} on Pickup
+              <CircleDollarSign className="w-4 h-4 mr-2" />
+              Place Order - Pay {formatCurrency(orderTotal)} on Pickup
             </>
           )}
         </button>
@@ -319,8 +319,8 @@ const CheckoutPage = () => {
                   <p className="text-sm text-gray-500">Qty: {item.quantity}</p>
                 </div>
                 <div className="text-right">
-                  <p className="font-medium text-gray-900">${item.total.toFixed(2)}</p>
-                  <p className="text-sm text-gray-500">${item.price.toFixed(2)} each</p>
+                  <p className="font-medium text-gray-900">{formatCurrency(item.total)}</p>
+                  <p className="text-sm text-gray-500">{formatCurrency(item.price)} each</p>
                 </div>
               </div>
             ))}
@@ -329,7 +329,7 @@ const CheckoutPage = () => {
           <div className="border-t border-gray-200 pt-4">
             <div className="flex justify-between items-center text-lg font-semibold text-gray-900">
               <span>Total</span>
-              <span>${orderSummary.totalPrice.toFixed(2)}</span>
+              <span>{formatCurrency(orderSummary.totalPrice)}</span>
             </div>
           </div>
         </div>

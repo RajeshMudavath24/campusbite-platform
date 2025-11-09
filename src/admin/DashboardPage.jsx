@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Clock, Users, DollarSign, AlertTriangle, CheckCircle } from 'lucide-react';
+import { Clock, Users, CircleDollarSign, AlertTriangle, CheckCircle } from 'lucide-react';
 import { listenAllOrders, updateOrderStatus as updateOrderStatusFs } from '../utils/firestoreClient';
 import { db } from '../firebase';
-import { collection, getCountFromServer } from 'firebase/firestore';
+import { collection, getCountFromServer, doc, getDoc } from 'firebase/firestore';
 import { formatCurrency, formatDateTime, getOrderUrgencyColor, getOrderStatusColor, getRemainingTimeText } from '../utils/helpers';
 import Button from '../components/Button';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -20,8 +20,36 @@ const DashboardPage = () => {
   const [itemsOrder, setItemsOrder] = useState(null);
 
   useEffect(() => {
-    const unsub = listenAllOrders((snap) => {
-      setOrders(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+    const unsub = listenAllOrders(async (snap) => {
+      const ordersData = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      
+      // Enrich orders with user names from Firestore if studentName is missing or is "student"/"Unknown"
+      const enrichedOrders = await Promise.all(ordersData.map(async (order) => {
+        // If studentName is missing, "student", "Unknown", or just the email prefix, fetch from Firestore
+        if (!order.studentName || 
+            order.studentName === 'student' || 
+            order.studentName === 'Unknown' ||
+            order.studentName === order.userId ||
+            (order.studentEmail && order.studentName === order.studentEmail.split('@')[0])) {
+          try {
+            if (order.userId) {
+              const userDoc = await getDoc(doc(db, 'users', order.userId));
+              if (userDoc.exists()) {
+                const userData = userDoc.data();
+                if (userData.name && userData.name !== 'student') {
+                  order.studentName = userData.name;
+                }
+              }
+            }
+          } catch (error) {
+            console.warn(`Could not fetch user data for order ${order.id}:`, error);
+            // Keep the existing studentName
+          }
+        }
+        return order;
+      }));
+      
+      setOrders(enrichedOrders);
       setLoading(false);
     });
     return () => unsub && unsub();
@@ -179,7 +207,7 @@ const DashboardPage = () => {
         <div className="card">
           <div className="flex items-center">
             <div className="p-2 bg-green-100 rounded-lg">
-              <DollarSign className="w-6 h-6 text-green-600" />
+              <CircleDollarSign className="w-6 h-6 text-green-600" />
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Total Revenue</p>

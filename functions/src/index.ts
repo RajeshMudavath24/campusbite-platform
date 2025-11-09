@@ -23,14 +23,136 @@ export const beforeUserCreated = functions.auth.user().beforeCreate(async (user)
 
 export const onUserCreated = functions.auth.user().onCreate(async (user) => {
   const email = user.email || '';
+  // Determine role: check if email starts with 'admin', otherwise default to 'student'
+  // Role can also be set explicitly via custom claims or user metadata
   const role = email.startsWith('admin') ? 'admin' : 'student';
+  const displayName = user.displayName || user.email?.split('@')[0] || 'Student';
+  
+  // Set custom claims for role-based access
   await admin.auth().setCustomUserClaims(user.uid, { role });
+  
+  // Store user data in Firestore with name field
   await db.collection('users').doc(user.uid).set({
     uid: user.uid,
     email,
+    name: displayName,
     role,
     createdAt: admin.firestore.FieldValue.serverTimestamp(),
   }, { merge: true });
+});
+
+// Callable function to update user profile (name and role)
+export const updateUserProfile = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Authentication required');
+  }
+
+  const uid = context.auth.uid;
+  const { name, role } = data;
+
+  // Only allow admins to update roles, or users to update their own name
+  const userDoc = await db.collection('users').doc(uid).get();
+  const userData = userDoc.data();
+  const isAdmin = userData?.role === 'admin' || context.auth.token.role === 'admin';
+
+  const updateData: any = {
+    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+  };
+
+  // Allow name updates for all users
+  if (name && typeof name === 'string' && name.trim().length > 0) {
+    updateData.name = name.trim();
+    
+    // Also update Firebase Auth displayName
+    try {
+      await admin.auth().updateUser(uid, {
+        displayName: name.trim()
+      });
+    } catch (error) {
+      console.error('Error updating displayName:', error);
+    }
+  }
+
+  // Only allow admins to update roles
+  if (role && isAdmin && (role === 'admin' || role === 'student')) {
+    updateData.role = role;
+    
+    // Update custom claims
+    try {
+      await admin.auth().setCustomUserClaims(uid, { role });
+    } catch (error) {
+      console.error('Error updating custom claims:', error);
+    }
+  }
+
+  // Update Firestore
+  await db.collection('users').doc(uid).update(updateData);
+
+  return { success: true, message: 'Profile updated successfully' };
+});
+
+// Callable function for admins to create users with name and role
+export const createUserWithProfile = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Authentication required');
+  }
+
+  // Check if user is admin
+  const userDoc = await db.collection('users').doc(context.auth.uid).get();
+  const userData = userDoc.data();
+  const isAdmin = userData?.role === 'admin' || context.auth.token.role === 'admin';
+
+  if (!isAdmin) {
+    throw new functions.https.HttpsError('permission-denied', 'Only admins can create users');
+  }
+
+  const { email, password, name, role = 'student' } = data;
+
+  if (!email || !email.endsWith('@hitam.org')) {
+    throw new functions.https.HttpsError('invalid-argument', 'Valid @hitam.org email is required');
+  }
+
+  if (!name || typeof name !== 'string' || name.trim().length === 0) {
+    throw new functions.https.HttpsError('invalid-argument', 'Name is required');
+  }
+
+  if (role !== 'admin' && role !== 'student') {
+    throw new functions.https.HttpsError('invalid-argument', 'Role must be admin or student');
+  }
+
+  try {
+    // Create user in Firebase Auth
+    const newUser = await admin.auth().createUser({
+      email,
+      password: password || 'TempPassword123!', // In production, generate a secure temp password
+      displayName: name.trim(),
+      emailVerified: false,
+    });
+
+    // Set custom claims
+    await admin.auth().setCustomUserClaims(newUser.uid, { role });
+
+    // Store user data in Firestore
+    await db.collection('users').doc(newUser.uid).set({
+      uid: newUser.uid,
+      email,
+      name: name.trim(),
+      role,
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    }, { merge: true });
+
+    return { 
+      success: true, 
+      uid: newUser.uid,
+      message: 'User created successfully'
+    };
+  } catch (error: any) {
+    console.error('Error creating user:', error);
+    if (error.code === 'auth/email-already-exists') {
+      throw new functions.https.HttpsError('already-exists', 'User with this email already exists');
+    }
+    throw new functions.https.HttpsError('internal', 'Failed to create user');
+  }
 });
 
 // Callable to register FCM token under users/{uid}
@@ -183,7 +305,7 @@ export const verifyCashfreePayment = functions.https.onCall(async (data, context
     // Create order with payment details
     const orderRef = await db.collection('orders').add({
       userId: uid,
-      studentName: userData?.name || userData?.email?.split('@')[0] || 'Unknown',
+      studentName: userData?.name || 'Student',
       studentEmail: userData?.email || 'unknown@hitam.org',
       items,
       totalAmount: totalPrice,
@@ -292,7 +414,7 @@ export const placeOrder = functions.https.onCall(async (data, context) => {
     
     const orderData = {
       userId: uid,
-      studentName: userData?.name || userData?.email?.split('@')[0] || 'Unknown',
+      studentName: userData?.name || 'Student',
       studentEmail: userData?.email || 'unknown@hitam.org',
       items,
       totalAmount: totalPrice,

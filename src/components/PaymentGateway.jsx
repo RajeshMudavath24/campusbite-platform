@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { CreditCard, Shield, AlertCircle, Loader } from 'lucide-react';
+import { formatCurrency } from '../utils/helpers';
 
 const PaymentGateway = ({ orderTotal, onPaymentSuccess, onPaymentError, requiredByTime }) => {
   const [isProcessing, setIsProcessing] = useState(false);
@@ -173,12 +174,12 @@ const PaymentGateway = ({ orderTotal, onPaymentSuccess, onPaymentError, required
         ) : paymentMethod === 'online' ? (
           <>
             <CreditCard className="w-4 h-4 mr-2" />
-            Pay ₹{orderTotal.toFixed(2)} with Cashfree
+            Pay {formatCurrency(orderTotal)} with Cashfree
           </>
         ) : (
           <>
             <Shield className="w-4 h-4 mr-2" />
-            Place Order - Pay ₹{orderTotal.toFixed(2)} on Pickup
+            Place Order - Pay {formatCurrency(orderTotal)} on Pickup
           </>
         )}
       </button>
