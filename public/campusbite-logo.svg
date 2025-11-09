@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- Background rounded square matching your navbar logo -->
+  <rect x="10" y="10" width="180" height="180" rx="45" fill="#2563eb"/>
+  
+  <!-- Large chef's hat icon centered -->
+  <g transform="translate(100, 100)">
+    <!-- Chef's hat base band -->
+    <rect x="-30" y="10" width="60" height="12" rx="6" fill="white"/>
+    
+    <!-- Chef's hat puffy top -->
+    <path d="M-25 10 Q-25 -10 0 -10 Q25 -10 25 10 L25 22 L-25 22 Z" fill="white"/>
+    
+    <!-- Chef's hat pleats for detail -->
+    <path d="M-15 10 Q-15 -5 0 -5 Q15 -5 15 10" stroke="white" stroke-width="2" fill="none"/>
+    <path d="M-8 10 Q-8 -2 0 -2 Q8 -2 8 10" stroke="white" stroke-width="1.5" fill="none"/>
+  </g>
+  
+  <!-- CampusBite text -->
+  <text x="100" y="170" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="white">CampusBite</text>
+</svg>

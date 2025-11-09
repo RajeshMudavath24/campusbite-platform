@@ -1,70 +1,233 @@
-# Getting Started with Create React App
+# CampusBite - Frontend-Only Campus Canteen Ordering System
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A modern, responsive React.js frontend application for campus canteen ordering with separate interfaces for students and administrators. This is a **frontend-only** application that uses local data storage and simulated functionality.
 
-## Available Scripts
+## 🚀 Features
 
-In the project directory, you can run:
+### Student Features
+- **Menu Browsing**: Browse food items with images, descriptions, and prices
+- **Shopping Cart**: Add items to cart with quantity controls
+- **Order Management**: Set required pickup time and track order status
+- **Payment Integration**: Secure payment processing (dummy implementation)
+- **Order History**: View past orders and their status
+- **Notifications**: Real-time order status updates
+- **Multi-language Support**: English, Telugu, and Hindi
 
-### `npm start`
+### Admin Features
+- **Dashboard**: Overview of all orders with urgency indicators
+- **Order Management**: Update order status and track progress
+- **Menu Management**: Add, edit, and delete menu items
+- **Analytics**: View popular items, peak hours, and revenue trends
+- **Digital Receipts**: Generate PDF reports (placeholder)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Technical Features
+- **Frontend-Only**: No backend required - runs entirely in the browser
+- **Responsive Design**: Mobile-first approach with Tailwind CSS
+- **Authentication**: Role-based access control (Student/Admin) using localStorage
+- **State Management**: React Context for auth, cart, and language
+- **Local Data Storage**: All data stored in browser localStorage
+- **Animations**: Smooth transitions and loading states
+- **Multi-language Support**: English, Telugu, and Hindi
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 🛠️ Tech Stack
 
-### `npm test`
+- **Frontend**: React.js 18
+- **Styling**: Tailwind CSS
+- **Routing**: React Router DOM
+- **Icons**: Lucide React
+- **State Management**: React Context API
+- **Build Tool**: Create React App
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 📁 Project Structure
 
-### `npm run build`
+```
+src/
+├── components/          # Shared components
+│   ├── Navbar.jsx
+│   ├── Footer.jsx
+│   ├── Button.jsx
+│   ├── Modal.jsx
+│   ├── LoadingSpinner.jsx
+│   └── LanguageSelector.jsx
+├── contexts/           # React Context providers
+│   ├── AuthContext.jsx
+│   ├── CartContext.jsx
+│   └── LanguageContext.jsx
+├── student/            # Student-specific pages
+│   ├── MenuPage.jsx
+│   ├── CartPage.jsx
+│   ├── OrdersPage.jsx
+│   └── NotificationsPage.jsx
+├── admin/              # Admin-specific pages
+│   ├── DashboardPage.jsx
+│   ├── MenuManagementPage.jsx
+│   └── AnalyticsPage.jsx
+├── pages/              # General pages
+│   └── Login.jsx
+├── utils/              # Utility functions
+│   ├── api.js          # Dummy API layer
+│   ├── helpers.js      # Helper functions
+│   └── languages.js    # Multi-language support
+├── data/               # Dummy data
+│   └── dummyData.js
+└── App.js              # Main app component
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## 🚀 Getting Started
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Prerequisites
+- Node.js (v14 or higher)
+- npm or yarn
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Installation
 
-### `npm run eject`
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd campusbite-platform
+   ```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+3. **Start the development server**
+   ```bash
+   npm start
+   ```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+4. **Open your browser**
+   Navigate to `http://localhost:3000`
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## 🔐 Demo Credentials
 
-## Learn More
+### Student Login
+- **Email**: `student@hitam.org`
+- **Password**: `password123`
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Admin Login
+- **Email**: `admin@hitam.org`
+- **Password**: `password123`
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## 📱 Usage
 
-### Code Splitting
+### For Students
+1. **Login** with student credentials
+2. **Browse Menu** to see available food items
+3. **Add to Cart** with desired quantities
+4. **Set Required Time** for pickup
+5. **Proceed to Payment** (dummy payment)
+6. **Track Orders** in order history
+7. **Receive Notifications** for status updates
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### For Admins
+1. **Login** with admin credentials
+2. **View Dashboard** for order overview
+3. **Update Order Status** as orders progress
+4. **Manage Menu** items (add/edit/delete)
+5. **View Analytics** for business insights
+6. **Generate Reports** (placeholder)
 
-### Analyzing the Bundle Size
+## 🌐 Multi-language Support
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+The application supports three languages:
+- **English** (en) - Default
+- **Telugu** (te) - తెలుగు
+- **Hindi** (hi) - हिन्दी
 
-### Making a Progressive Web App
+Language can be changed using the language selector in the navbar.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## 🔧 Data Management
 
-### Advanced Configuration
+The application uses local data management (`src/utils/api.js`) that works entirely in the browser:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+- **Menu Items**: Stored in `src/data/dummyData.js`
+- **Orders**: Managed in memory and localStorage
+- **Authentication**: Uses browser localStorage
+- **No Backend Required**: Everything runs client-side
 
-### Deployment
+### Data Structure
+```javascript
+// Menu items are stored in dummyData.js
+export const menuItems = [
+  {
+    id: 1,
+    name: "Chicken Biryani",
+    description: "Fragrant basmati rice...",
+    price: 120,
+    category: "Main Course",
+    // ... other properties
+  }
+];
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+// API functions provide direct access
+export const menuAPI = {
+  getMenuItems: () => menuItems,
+  addMenuItem: (itemData) => { /* add logic */ },
+  // ... other functions
+};
+```
 
-### `npm run build` fails to minify
+## 🎨 Customization
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### Styling
+- Modify `tailwind.config.js` for theme customization
+- Update `src/index.css` for global styles
+- Component-specific styles use Tailwind classes
+
+### Adding New Features
+1. **Create components** in appropriate folders
+2. **Add routes** in `App.js`
+3. **Update navigation** in `Navbar.jsx`
+4. **Add translations** in `languages.js`
+
+## 📦 Build for Production
+
+```bash
+npm run build
+```
+
+This creates a `build` folder with optimized production files.
+
+## 🧪 Testing
+
+```bash
+npm test
+```
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
+
+## 📄 License
+
+This project is licensed under the MIT License.
+
+## 🔮 Future Enhancements
+
+- [ ] Backend integration (Firebase/Node.js/Express)
+- [ ] Real database (MongoDB/PostgreSQL)
+- [ ] Push notifications
+- [ ] Real payment gateway integration
+- [ ] Advanced analytics and reporting
+- [ ] Inventory management
+- [ ] Staff management
+- [ ] Customer reviews and ratings
+- [ ] Loyalty program
+- [ ] Mobile app (React Native)
+- [ ] PWA (Progressive Web App) features
+
+## 📞 Support
+
+For support or questions, please contact:
+- **Email**: support@campusbite.com
+- **Documentation**: [Project Wiki](link-to-wiki)
+
+---
+
+**CampusBite** - Making campus dining simple and efficient! 🍽️
