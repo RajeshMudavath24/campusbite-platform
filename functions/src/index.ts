@@ -13,16 +13,19 @@ const cashfreeConfig = {
 };
 
 // Auth: enforce @hitam.org emails and set default role
-export const beforeUserCreated = functions.auth.user().beforeCreate(async (user) => {
-  const email = user.email || '';
-  const isHitam = email.endsWith('@hitam.org');
-  if (!isHitam) {
-    throw new functions.auth.HttpsError('permission-denied', 'Only @hitam.org emails are allowed');
-  }
-});
-
+// Note: Email validation is handled client-side and in Firestore rules
+// Blocking functions (beforeUserCreated) require GCIP and are disabled for this project
 export const onUserCreated = functions.auth.user().onCreate(async (user) => {
   const email = user.email || '';
+  
+  // Validate @hitam.org email (validation also done client-side and in Firestore rules)
+  const isHitam = email.endsWith('@hitam.org');
+  if (!isHitam) {
+    console.warn(`User created with non-@hitam.org email: ${email}`);
+    // Don't throw error here as user is already created
+    // Email validation should be enforced client-side and via Firestore rules
+  }
+  
   // Determine role: check if email starts with 'admin', otherwise default to 'student'
   // Role can also be set explicitly via custom claims or user metadata
   const role = email.startsWith('admin') ? 'admin' : 'student';

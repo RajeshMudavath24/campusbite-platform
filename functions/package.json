@@ -1,7 +1,7 @@
 {
   "name": "campusbite-functions",
   "engines": {
-    "node": "18"
+    "node": "20"
   },
   "scripts": {
     "build": "tsc",
