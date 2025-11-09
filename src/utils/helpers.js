@@ -1,11 +1,25 @@
 // Helper utility functions for CampusBite platform
 
-// Format currency
+// Format currency - Always displays Indian Rupee (₹)
 export const formatCurrency = (amount) => {
-  return new Intl.NumberFormat('en-IN', {
-    style: 'currency',
-    currency: 'INR'
-  }).format(amount);
+  if (amount == null || isNaN(amount)) {
+    return '₹0.00';
+  }
+  
+  try {
+    const formatted = new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(amount);
+    
+    // Ensure rupee symbol is used (fallback if browser doesn't support INR properly)
+    return formatted.replace(/Rs|INR|₹?/gi, '₹').replace(/₹\s*/, '₹');
+  } catch (e) {
+    // Fallback: manually format with rupee symbol
+    return '₹' + parseFloat(amount).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  }
 };
 
 // Helper to convert Firestore Timestamp to Date
