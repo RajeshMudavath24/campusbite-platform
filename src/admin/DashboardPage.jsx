@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Clock, Users, CircleDollarSign, AlertTriangle, CheckCircle } from 'lucide-react';
+import { Clock, Users, IndianRupee, AlertTriangle, CheckCircle } from 'lucide-react';
 import { listenAllOrders, updateOrderStatus as updateOrderStatusFs } from '../utils/firestoreClient';
 import { db } from '../firebase';
 import { collection, getCountFromServer, doc, getDoc } from 'firebase/firestore';
@@ -207,7 +207,7 @@ const DashboardPage = () => {
         <div className="card">
           <div className="flex items-center">
             <div className="p-2 bg-green-100 rounded-lg">
-              <CircleDollarSign className="w-6 h-6 text-green-600" />
+              <IndianRupee className="w-6 h-6 text-green-600" />
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Total Revenue</p>

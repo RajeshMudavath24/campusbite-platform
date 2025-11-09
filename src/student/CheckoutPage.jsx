@@ -6,7 +6,7 @@ import { httpsCallable } from 'firebase/functions';
 import { functions } from '../firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
-import { ShoppingCart, CircleDollarSign, CheckCircle, AlertCircle } from 'lucide-react';
+import { ShoppingCart, IndianRupee, CheckCircle, AlertCircle } from 'lucide-react';
 import PaymentGateway from '../components/PaymentGateway';
 import { formatCurrency } from '../utils/helpers';
 
@@ -75,14 +75,14 @@ const CashOnDeliveryForm = ({ orderTotal, onOrderSuccess, onOrderError }) => {
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="bg-white p-6 rounded-lg border border-gray-200">
         <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-          <CircleDollarSign className="w-5 h-5 mr-2" />
+          <IndianRupee className="w-5 h-5 mr-2" />
           Payment
         </h3>
         
         <div className="mb-6">
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
             <div className="flex items-center">
-              <CircleDollarSign className="w-5 h-5 text-blue-600 mr-2" />
+              <IndianRupee className="w-5 h-5 text-blue-600 mr-2" />
               <div>
                 <h4 className="font-medium text-blue-900">Cash on Pickup</h4>
                 <p className="text-sm text-blue-700">
@@ -130,7 +130,7 @@ const CashOnDeliveryForm = ({ orderTotal, onOrderSuccess, onOrderError }) => {
             </>
           ) : (
             <>
-              <CircleDollarSign className="w-4 h-4 mr-2" />
+              <IndianRupee className="w-4 h-4 mr-2" />
               Place Order - Pay {formatCurrency(orderTotal)} on Pickup
             </>
           )}
