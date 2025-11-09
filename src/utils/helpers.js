@@ -6,20 +6,25 @@ export const formatCurrency = (amount) => {
     return '₹0.00';
   }
   
-  try {
-    const formatted = new Intl.NumberFormat('en-IN', {
-      style: 'currency',
-      currency: 'INR',
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    }).format(amount);
-    
-    // Ensure rupee symbol is used (fallback if browser doesn't support INR properly)
-    return formatted.replace(/Rs|INR|₹?/gi, '₹').replace(/₹\s*/, '₹');
-  } catch (e) {
-    // Fallback: manually format with rupee symbol
-    return '₹' + parseFloat(amount).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  const numAmount = parseFloat(amount);
+  if (isNaN(numAmount)) {
+    return '₹0.00';
   }
+  
+  // Format with Indian numbering system and ensure rupee symbol
+  const formatted = new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency: 'INR',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }).format(numAmount);
+  
+  // Some browsers might display 'Rs.' or 'INR' instead of ₹
+  // Replace any currency indicator with ₹ symbol
+  return formatted
+    .replace(/Rs\.?\s*/gi, '₹')
+    .replace(/INR\s*/gi, '₹')
+    .replace(/^₹?\s*/, '₹'); // Ensure it starts with ₹
 };
 
 // Helper to convert Firestore Timestamp to Date
